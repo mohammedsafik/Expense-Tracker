@@ -1,15 +1,23 @@
+//importing requirements
 const mongoose=require('mongoose')
 const express=require('express')
 const   {Expense} =require('./schema.js')
 const bodyparser=require('body-parser')
+const cors=require('cors')
+
+//creating app
 console.log("hello")
 const app=express()
 app.use(bodyparser.json())
+app.use(cors())
+
+
+//connection to database
 async function connectdb(){
     try{
         await mongoose.connect('mongodb+srv://mohammedsafik:safi123@atlascluster.c8pcsid.mongodb.net/EXPENSETRACKER?retryWrites=true&w=majority&appName=AtlasCluster')
     console.log("DB CONNECTED")
-    const port=8000
+    const port=process.env.PORT || 8000
     app.listen(port,()=>{
     console.log(`listening on port ${port}`)
     })
@@ -19,8 +27,11 @@ async function connectdb(){
         console.log("NOT CONNECTED")
     }
 }
-// const Expense=mongoose.model('EXPENSE_DETAILS',expensetrackerschema)
 connectdb()
+
+
+
+//adding details
 app.post('/add',async(request,response)=>{
     // console.log(request.body)
     // response.json({
@@ -43,6 +54,10 @@ app.post('/add',async(request,response)=>{
     })
    }
 })
+
+
+
+//display the data
 app.get('/get-expense',async(request,response)=>{
    try{
      const data=await Expense.find()
@@ -61,8 +76,11 @@ app.get('/get-expense',async(request,response)=>{
    }
     //localhost:8000/delete/65e69de1413ce2c12bef04c9
 })
+
+
+
+//deleting the data
  app.delete('/delete/:id',async(request,respone)=>{
-   
   try{
     const data=await Expense.findById(request.params.id)
     // console.log(data) 
@@ -87,6 +105,9 @@ app.get('/get-expense',async(request,response)=>{
   }
  })
 
+
+
+//editing the data
 app.patch('/edit/:id',async(request,response)=>{
     try{
      const data=await Expense.findById(request.params.id)
